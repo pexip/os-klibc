@@ -1,0 +1,39 @@
+Description: Include the multiarch include directory in klcc's path
+ The multiarch include directory, /usr/include/<triplet>, needs to be
+ explicitly added to klcc's path; without this, klcc is incompatible
+ with recent Ubuntu versions of linux-libc-dev and fails to find any asm/
+ headers.
+ .
+ This change is safe to apply on non-multiarch-enabled systems, since
+ $(DEB_HOST_MULTIARCH) will evaluate empty.  However, upstreaming should
+ probably wait until we have a way to get this path information in a
+ vendor-neutral manner.
+Author: Steve Langasek <steve.langasek@linaro.org>
+
+Index: klibc-1.5.20/klcc/Kbuild
+===================================================================
+--- klibc-1.5.20.orig/klcc/Kbuild
++++ klibc-1.5.20/klcc/Kbuild
+@@ -26,6 +26,7 @@
+ 	$(Q)echo 'bindir=$(INSTALLDIR)/$(KCROSS)bin' >> $@
+ 	$(Q)echo 'libdir=$(INSTALLDIR)/$(KCROSS)lib' >> $@
+ 	$(Q)echo 'includedir=$(INSTALLDIR)/$(KCROSS)include' >> $@
++	$(Q)echo 'multiarch_path=$(DEB_HOST_MULTIARCH)' >> $@
+ 
+ 
+ # Generate klcc
+Index: klibc-1.5.20/klcc/klcc.in
+===================================================================
+--- klibc-1.5.20.orig/klcc/klcc.in
++++ klibc-1.5.20/klcc/klcc.in
+@@ -7,6 +7,10 @@
+ 	     "-I${prefix}/${KCROSS}include/bits${BITSIZE}",
+ 	     "-I${prefix}/${KCROSS}include");
+ 
++if ($multiarch_path ne '') {
++	unshift(@includes, "-I${prefix}/${KCROSS}include/${multiarch_path}");
++}
++
+ # Default optimization options (for compiles without -g)
+ @optopt =  @OPTFLAGS;
+ @goptopt = ('-O');

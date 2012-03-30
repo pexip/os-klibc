@@ -1,0 +1,91 @@
+Index: b/usr/dash/Kbuild
+===================================================================
+--- a/usr/dash/Kbuild
++++ b/usr/dash/Kbuild
+@@ -93,7 +93,7 @@
+ 	$(Q):
+ 
+ # Targets to install
+-ifeq ($(ARCH),ia64)
++ifneq (,$(filter $(ARCH),ia64 ppc64))
+ install-y := sh
+ else
+ install-y := sh.shared
+Index: b/usr/kinit/fstype/Kbuild
+===================================================================
+--- a/usr/kinit/fstype/Kbuild
++++ b/usr/kinit/fstype/Kbuild
+@@ -22,7 +22,7 @@
+ clean-dirs := static shared
+ 
+ # install binary
+-ifeq ($(ARCH),ia64)
++ifneq (,$(filter $(ARCH),ia64 ppc64))
+ install-y := $(static-y)
+ else
+ install-y := $(shared-y)
+Index: b/usr/kinit/ipconfig/Kbuild
+===================================================================
+--- a/usr/kinit/ipconfig/Kbuild
++++ b/usr/kinit/ipconfig/Kbuild
+@@ -28,7 +28,7 @@
+ clean-dirs := static shared
+ 
+ # install binary
+-ifeq ($(ARCH),ia64)
++ifneq (,$(filter $(ARCH),ia64 ppc64))
+ install-y := $(static-y)
+ else
+ install-y := $(shared-y)
+Index: b/usr/kinit/nfsmount/Kbuild
+===================================================================
+--- a/usr/kinit/nfsmount/Kbuild
++++ b/usr/kinit/nfsmount/Kbuild
+@@ -24,7 +24,7 @@
+ clean-dirs := static shared
+ 
+ # Install binary
+-ifeq ($(ARCH),ia64)
++ifneq (,$(filter $(ARCH),ia64 ppc64))
+ install-y := $(static-y)
+ else
+ install-y := $(shared-y)
+Index: b/usr/kinit/resume/Kbuild
+===================================================================
+--- a/usr/kinit/resume/Kbuild
++++ b/usr/kinit/resume/Kbuild
+@@ -27,7 +27,7 @@
+ clean-dirs := static shared
+ 
+ # install binary
+-ifeq ($(ARCH),ia64)
++ifneq (,$(filter $(ARCH),ia64 ppc64))
+ install-y := $(static-y)
+ else
+ install-y := $(shared-y)
+Index: b/usr/kinit/run-init/Kbuild
+===================================================================
+--- a/usr/kinit/run-init/Kbuild
++++ b/usr/kinit/run-init/Kbuild
+@@ -26,7 +26,7 @@
+ clean-dirs := static shared
+ 
+ # install binary
+-ifeq ($(ARCH),ia64)
++ifneq (,$(filter $(ARCH),ia64 ppc64))
+ install-y := $(static-y)
+ else
+ install-y := $(shared-y)
+Index: b/usr/utils/Kbuild
+===================================================================
+--- a/usr/utils/Kbuild
++++ b/usr/utils/Kbuild
+@@ -73,7 +73,7 @@
+ clean-dirs := static shared
+ 
+ # install only install the shared binaries
+-ifeq ($(ARCH),ia64)
++ifneq (,$(filter $(ARCH),ia64 ppc64))
+ install-y := $(static-y) static/reboot static/poweroff
+ else
+ install-y := $(shared-y) shared/reboot shared/poweroff

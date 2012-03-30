@@ -1,0 +1,3 @@
+libklibc-dev: statically-linked-binary
+libklibc-dev: unstripped-binary-or-object
+libklibc-dev: embedded-zlib
