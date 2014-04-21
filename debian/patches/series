@@ -4,5 +4,3 @@ klibc-linux-libc-dev
 insmod
 multiarch-include-path
 Fix-minimal-mv-to-work-across-fs
-define-__aligned_u64
-fix-cross-build

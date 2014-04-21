@@ -1,7 +1,7 @@
 #!/bin/sh
 
 set -e
- 
+
 if [ ! -L /usr/share/doc/klibc-utils ] && \
 [ -e /usr/share/doc/klibc-utils ]; then
 	rm -rf /usr/share/doc/klibc-utils
@@ -10,4 +10,3 @@ if [ ! -L /usr/share/doc/klibc-utils ] && \
 fi
 
 #DEBHELPER#
-

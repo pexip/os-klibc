@@ -1,6 +1,11 @@
---- a/usr/dash/Kbuild
-+++ b/usr/dash/Kbuild
-@@ -108,4 +108,8 @@
+Description: Use static tools on IA64
+ On IA64, the shared binaries do not work.
+
+Index: klibc-2.0~rc2/usr/dash/Kbuild
+===================================================================
+--- klibc-2.0~rc2.orig/usr/dash/Kbuild	2012-02-11 18:50:21.000000000 +0000
++++ klibc-2.0~rc2/usr/dash/Kbuild	2012-02-11 19:04:51.000000000 +0000
+@@ -93,4 +93,8 @@
  	$(Q):
  
  # Targets to install
@@ -9,8 +14,10 @@
 +else
  install-y := sh.shared
 +endif
---- a/usr/kinit/fstype/Kbuild
-+++ b/usr/kinit/fstype/Kbuild
+Index: klibc-2.0~rc2/usr/kinit/fstype/Kbuild
+===================================================================
+--- klibc-2.0~rc2.orig/usr/kinit/fstype/Kbuild	2012-02-11 18:45:44.000000000 +0000
++++ klibc-2.0~rc2/usr/kinit/fstype/Kbuild	2012-02-11 19:04:51.000000000 +0000
 @@ -22,4 +22,8 @@
  clean-dirs := static shared
  
@@ -20,8 +27,10 @@
 +else
  install-y := $(shared-y)
 +endif
---- a/usr/kinit/ipconfig/Kbuild
-+++ b/usr/kinit/ipconfig/Kbuild
+Index: klibc-2.0~rc2/usr/kinit/ipconfig/Kbuild
+===================================================================
+--- klibc-2.0~rc2.orig/usr/kinit/ipconfig/Kbuild	2012-02-11 18:45:44.000000000 +0000
++++ klibc-2.0~rc2/usr/kinit/ipconfig/Kbuild	2012-02-11 19:04:51.000000000 +0000
 @@ -28,4 +28,8 @@
  clean-dirs := static shared
  
@@ -31,8 +40,10 @@
 +else
  install-y := $(shared-y)
 +endif
---- a/usr/kinit/nfsmount/Kbuild
-+++ b/usr/kinit/nfsmount/Kbuild
+Index: klibc-2.0~rc2/usr/kinit/nfsmount/Kbuild
+===================================================================
+--- klibc-2.0~rc2.orig/usr/kinit/nfsmount/Kbuild	2012-02-11 18:45:44.000000000 +0000
++++ klibc-2.0~rc2/usr/kinit/nfsmount/Kbuild	2012-02-11 19:04:51.000000000 +0000
 @@ -24,4 +24,8 @@
  clean-dirs := static shared
  
@@ -42,8 +53,10 @@
 +else
  install-y := $(shared-y)
 +endif
---- a/usr/kinit/resume/Kbuild
-+++ b/usr/kinit/resume/Kbuild
+Index: klibc-2.0~rc2/usr/kinit/resume/Kbuild
+===================================================================
+--- klibc-2.0~rc2.orig/usr/kinit/resume/Kbuild	2012-02-11 18:45:44.000000000 +0000
++++ klibc-2.0~rc2/usr/kinit/resume/Kbuild	2012-02-11 19:04:51.000000000 +0000
 @@ -27,4 +27,8 @@
  clean-dirs := static shared
  
@@ -53,8 +66,10 @@
 +else
  install-y := $(shared-y)
 +endif
---- a/usr/kinit/run-init/Kbuild
-+++ b/usr/kinit/run-init/Kbuild
+Index: klibc-2.0~rc2/usr/kinit/run-init/Kbuild
+===================================================================
+--- klibc-2.0~rc2.orig/usr/kinit/run-init/Kbuild	2012-02-11 18:50:21.000000000 +0000
++++ klibc-2.0~rc2/usr/kinit/run-init/Kbuild	2012-02-11 19:04:51.000000000 +0000
 @@ -26,4 +26,8 @@
  clean-dirs := static shared
  
@@ -64,9 +79,11 @@
 +else
  install-y := $(shared-y)
 +endif
---- a/usr/utils/Kbuild
-+++ b/usr/utils/Kbuild
-@@ -69,4 +69,8 @@
+Index: klibc-2.0~rc2/usr/utils/Kbuild
+===================================================================
+--- klibc-2.0~rc2.orig/usr/utils/Kbuild	2012-02-11 18:50:21.000000000 +0000
++++ klibc-2.0~rc2/usr/utils/Kbuild	2012-02-11 19:04:51.000000000 +0000
+@@ -73,4 +73,8 @@
  clean-dirs := static shared
  
  # install only install the shared binaries

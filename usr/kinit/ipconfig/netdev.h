@@ -28,6 +28,7 @@ struct netdev {
 		int fd;
 	} rarp;
 
+	uint8_t proto;          /* a protocol used (e.g. PROTO_DHCP) */
 	uint32_t ip_addr;	/* my address           */
 	uint32_t ip_broadcast;	/* broadcast address    */
 	uint32_t ip_server;	/* server address       */
@@ -35,12 +36,15 @@ struct netdev {
 	uint32_t ip_gateway;	/* my gateway           */
 	uint32_t ip_nameserver[2];	/* two nameservers      */
 	uint32_t serverid;		/* dhcp serverid        */
+	uint32_t dhcpleasetime;	/* duration in seconds  */
 	char reqhostname[SYS_NMLN];	/* requested hostname   */
 	char hostname[SYS_NMLN];	/* hostname             */
 	char dnsdomainname[SYS_NMLN];	/* dns domain name      */
 	char nisdomainname[SYS_NMLN];	/* nis domain name      */
 	char bootpath[BPLEN];	/* boot path            */
 	char filename[FNLEN];   /* filename             */
+	char *domainsearch;	/* decoded, NULL or malloc-ed  */
+	long uptime;		/* when complete configuration */
 	struct netdev *next;	/* next configured i/f  */
 };
 

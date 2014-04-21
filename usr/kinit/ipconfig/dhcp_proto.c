@@ -25,6 +25,7 @@ static uint8_t dhcp_params[] = {
 	26,			/* interface mtu */
 	28,			/* broadcast addr */
 	40,			/* NIS domain name (why?) */
+	119,			/* Domain Search Option */
 };
 
 static uint8_t dhcp_discover_hdr[] = {
@@ -49,7 +50,7 @@ static uint8_t dhcp_end[] = {
 
 /* Both iovecs below have to have the same structure, since dhcp_send()
    pokes at the internals */
-#define DHCP_IOV_LEN 7
+#define DHCP_IOV_LEN 8
 
 static struct iovec dhcp_discover_iov[DHCP_IOV_LEN] = {
 	/* [0] = ip + udp header */
@@ -59,6 +60,7 @@ static struct iovec dhcp_discover_iov[DHCP_IOV_LEN] = {
 	/* [4] = optional vendor class */
 	/* [5] = optional hostname */
 	/* [6] = {dhcp_end, sizeof(dhcp_end)} */
+	/* [7] = optional padding */
 };
 
 static struct iovec dhcp_request_iov[DHCP_IOV_LEN] = {
@@ -69,6 +71,7 @@ static struct iovec dhcp_request_iov[DHCP_IOV_LEN] = {
 	/* [4] = optional vendor class */
 	/* [5] = optional hostname */
 	/* [6] = {dhcp_end, sizeof(dhcp_end)} */
+	/* [7] = optional padding */
 };
 
 /*
@@ -84,6 +87,7 @@ static int dhcp_parse(struct netdev *dev, struct bootp_hdr *hdr,
 {
 	uint8_t type = 0;
 	uint32_t serverid = INADDR_NONE;
+	uint32_t leasetime = 0;
 	int ret = 0;
 
 	if (extlen >= 4 && exts[0] == 99 && exts[1] == 130 &&
@@ -91,18 +95,35 @@ static int dhcp_parse(struct netdev *dev, struct bootp_hdr *hdr,
 		uint8_t *ext;
 
 		for (ext = exts + 4; ext - exts < extlen;) {
-			uint8_t len, *opt = ext++;
-			if (*opt == 0)
-				continue;
+			int len;
+			uint8_t opt = *ext++;
 
+			if (opt == 0)
+				continue;
+			else if (opt == 255)
+				break;
+
+			if (ext - exts >= extlen)
+				break;
 			len = *ext++;
 
+			if (ext - exts + len > extlen)
+				break;
+			switch (opt) {
+			case 51:	/* IP Address Lease Time */
+				if (len == 4)
+					leasetime = ntohl(*(uint32_t *)ext);
+				break;
+			case 53:	/* DHCP Message Type */
+				if (len == 1)
+					type = *ext;
+				break;
+			case 54:	/* Server Identifier */
+				if (len == 4)
+					memcpy(&serverid, ext, 4);
+				break;
+			}
 			ext += len;
-
-			if (*opt == 53)
-				type = opt[2];
-			if (*opt == 54)
-				memcpy(&serverid, opt + 2, 4);
 		}
 	}
 
@@ -115,6 +136,7 @@ static int dhcp_parse(struct netdev *dev, struct bootp_hdr *hdr,
 		break;
 
 	case DHCPACK:
+		dev->dhcpleasetime = leasetime;
 		ret = bootp_parse(dev, hdr, exts, extlen) ? DHCPACK : 0;
 		dprintf("\n   dhcp ack\n");
 		break;
@@ -139,7 +161,7 @@ static int dhcp_parse(struct netdev *dev, struct bootp_hdr *hdr,
 static int dhcp_recv(struct netdev *dev)
 {
 	struct bootp_hdr bootp;
-	uint8_t dhcp_options[1500];
+	uint8_t dhcp_options[BOOTP_EXTS_SIZE];
 	struct iovec iov[] = {
 		/* [0] = ip + udp header */
 		[1] = {&bootp, sizeof(struct bootp_hdr)},
@@ -167,7 +189,10 @@ static int dhcp_send(struct netdev *dev, struct iovec *vec)
 {
 	struct bootp_hdr bootp;
 	char dhcp_hostname[SYS_NMLN+2];
+	uint8_t padding[BOOTP_MIN_LEN - sizeof(struct bootp_hdr)];
+	int padding_len;
 	int i = 4;
+	int j;
 
 	memset(&bootp, 0, sizeof(struct bootp_hdr));
 
@@ -211,6 +236,17 @@ static int dhcp_send(struct netdev *dev, struct iovec *vec)
 
 	vec[i].iov_base = dhcp_end;
 	vec[i].iov_len  = sizeof(dhcp_end);
+
+	/* Append padding if DHCP packet length is shorter than BOOTP_MIN_LEN */
+	padding_len = sizeof(padding);
+	for (j = 2; j <= i; j++)
+		padding_len -= vec[j].iov_len;
+	if (padding_len > 0) {
+		memset(padding, 0, padding_len);
+		i++;
+		vec[i].iov_base = padding;
+		vec[i].iov_len  = padding_len;
+	}
 
 	return packet_send(dev, vec, i + 1);
 }

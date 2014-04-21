@@ -10,7 +10,10 @@
 #include <stdint.h>
 
 #define _SSIZE_T
-typedef ptrdiff_t ssize_t;
+/* __SIZE_TYPE__ defined either by GCC or <stddef.h> */
+#define unsigned /* nothing, temporarily */
+typedef signed __SIZE_TYPE__ ssize_t;
+#undef unsigned
 
 #include <linux/posix_types.h>
 #include <asm/types.h>
@@ -22,7 +25,6 @@ typedef __kernel_fd_set fd_set;
 typedef uint32_t dev_t;
 typedef __kernel_ino_t ino_t;
 typedef __kernel_mode_t mode_t;
-typedef __kernel_nlink_t nlink_t;
 typedef __kernel_loff_t off_t;
 typedef __kernel_loff_t loff_t;
 typedef __kernel_pid_t pid_t;
@@ -41,21 +43,6 @@ typedef __kernel_fsid_t fsid_t;
  * The following typedefs are also protected by individual ifdefs for
  * historical reasons:
  */
-#ifndef _SIZE_T
-#define _SIZE_T
-typedef __kernel_size_t size_t;
-#endif
-
-#ifndef _SSIZE_T
-#define _SSIZE_T
-typedef __kernel_ssize_t ssize_t;
-#endif
-
-#ifndef _PTRDIFF_T
-#define _PTRDIFF_T
-typedef __kernel_ptrdiff_t ptrdiff_t;
-#endif
-
 #ifndef _TIME_T
 #define _TIME_T
 typedef __kernel_time_t time_t;
@@ -89,16 +76,21 @@ typedef uint16_t u_int16_t;
 typedef uint32_t u_int32_t;
 typedef uint64_t u_int64_t;
 
-typedef uint16_t __bitwise __le16;
-typedef uint16_t __bitwise __be16;
-typedef uint32_t __bitwise __le32;
-typedef uint32_t __bitwise __be32;
-typedef uint64_t __bitwise __le64;
-typedef uint64_t __bitwise __be64;
+typedef __u16 __bitwise __le16;
+typedef __u16 __bitwise __be16;
+typedef __u32 __bitwise __le32;
+typedef __u32 __bitwise __be32;
+typedef __u64 __bitwise __le64;
+typedef __u64 __bitwise __be64;
 
-typedef uint16_t __sum16;
-typedef uint32_t __sum32;
-typedef uint64_t __sum64;
+typedef __u16 __bitwise __sum16;
+typedef __u32 __bitwise __sum32;
+typedef __u64 __bitwise __sum64;
+typedef __u32 __bitwise __wsum;
+
+#define __aligned_u64 __u64 __attribute__((aligned(8)))
+#define __aligned_be64 __be64 __attribute__((aligned(8)))
+#define __aligned_le64 __le64 __attribute__((aligned(8)))
 
 /*
  * Some headers seem to require this...
