@@ -1,9 +1,5 @@
 /*
  * fgets.c
- *
- * This will be very slow due to the implementation of getc(),
- * but we don't have anywhere to put characters we don't need from
- * the input.
  */
 
 #include <stdio.h>
@@ -16,8 +12,8 @@ char *fgets(char *s, int n, FILE *f)
 	while (n > 1) {
 		ch = getc(f);
 		if (ch == EOF) {
-			*p = '\0';
-			return NULL;
+			s = NULL;
+			break;
 		}
 		*p++ = ch;
 		n--;

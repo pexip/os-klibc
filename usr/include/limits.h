@@ -5,6 +5,11 @@
 #ifndef _LIMITS_H
 #define _LIMITS_H
 
+/* No multibyte characters seen */
+#define MB_LEN_MAX 1
+
+#define OPEN_MAX        256
+
 #define CHAR_BIT	8
 #define SHRT_BIT	16
 #define INT_BIT		32
@@ -36,5 +41,7 @@
 
 #include <bitsize/limits.h>
 #include <linux/limits.h>
+
+#define SSIZE_MAX	LONG_MAX
 
 #endif				/* _LIMITS_H */

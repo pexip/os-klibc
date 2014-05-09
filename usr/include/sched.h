@@ -6,10 +6,11 @@
 #define _SCHED_H
 
 #include <klibc/extern.h>
+#include <sys/types.h>
 
 /* linux/sched.h is unusable; put the declarations we need here... */
 
-#define SCHED_NORMAL            0
+#define SCHED_OTHER             0
 #define SCHED_FIFO              1
 #define SCHED_RR                2
 
