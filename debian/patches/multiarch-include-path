@@ -10,10 +10,10 @@ Description: Include the multiarch include directory in klcc's path
  vendor-neutral manner.
 Author: Steve Langasek <steve.langasek@linaro.org>
 
-Index: klibc-1.5.20/klcc/Kbuild
+Index: klibc-2.0~rc2/klcc/Kbuild
 ===================================================================
---- klibc-1.5.20.orig/klcc/Kbuild
-+++ klibc-1.5.20/klcc/Kbuild
+--- klibc-2.0~rc2.orig/klcc/Kbuild	2012-02-11 18:45:42.000000000 +0000
++++ klibc-2.0~rc2/klcc/Kbuild	2012-02-11 19:04:53.000000000 +0000
 @@ -26,6 +26,7 @@
  	$(Q)echo 'bindir=$(INSTALLDIR)/$(KCROSS)bin' >> $@
  	$(Q)echo 'libdir=$(INSTALLDIR)/$(KCROSS)lib' >> $@
@@ -22,10 +22,10 @@ Index: klibc-1.5.20/klcc/Kbuild
  
  
  # Generate klcc
-Index: klibc-1.5.20/klcc/klcc.in
+Index: klibc-2.0~rc2/klcc/klcc.in
 ===================================================================
---- klibc-1.5.20.orig/klcc/klcc.in
-+++ klibc-1.5.20/klcc/klcc.in
+--- klibc-2.0~rc2.orig/klcc/klcc.in	2012-02-11 18:50:21.000000000 +0000
++++ klibc-2.0~rc2/klcc/klcc.in	2012-02-11 19:04:53.000000000 +0000
 @@ -7,6 +7,10 @@
  	     "-I${prefix}/${KCROSS}include/bits${BITSIZE}",
  	     "-I${prefix}/${KCROSS}include");

@@ -7,14 +7,12 @@ work in progress, and a lot of things are still missing.
 The build procedure is not very polished yet, but it should work like
 this:
 
-a) In the source root directory (the directory above the one in which
-   this file is found) create a symlink called "linux" pointing to a
-   reasonably recent Linux kernel tree (2.4 or 2.6 should be OK.)
-   This tree must have the include/asm symlink set up for the
-   architecture you're compiling for, and include/linux/autoconf.h
-   must exist.  The easiest way to make sure of all of these is to do
-   a "make config" or any of its variants on the kernel tree is
-   question, followed by a "make dep" (2.4) or "make prepare" (2.6).
+a) Extract a recent Linux kernel into a directory and run
+   "make headers_install".
+   Now enter the klibc dir and point KLIBCKERNELSRC to the
+   path of the configured linux tree
+   "make  KLIBCKERNELSRC=`pwd`/../linux/usr/".
+
 
 b) If you're cross-compiling, you need to set KLIBCARCH to the
    appropriate architecture, and set CROSS_COMPILE to your toolchain
@@ -38,26 +36,26 @@ b) If you're cross-compiling, you need to set KLIBCARCH to the
    arm-thumb:	 Untested
    arm:		 Working
    arm26:	 Not yet ported
+   arm64:	 Working
    avr32:	 Not yet ported
    cris:	 Working
    h8300:	 Not yet ported
    i386:	 Working
    ia64:	 Working static, shared untested
    m32r:	 Untested
-   m68k:	 Untested
-   m68knommu:	 Not yet ported
+   m68k:	 Working
    mips:	 Working
    mips64:	 Not yet ported
-   parisc:	 Working
+   parisc:	 Untested
    parisc64:	 Not yet ported
    ppc:		 Working
    ppc64:	 Working
    s390:	 Working
    s390x:	 Working
-   sh:		 Untested
+   sh:		 Runtime breakage
    sh64:	 Not yet ported
    sparc:	 Working
-   sparc64:	 Untested
+   sparc64:	 Working
    v850:	 Not yet ported
    x86-64:	 Working
    xtensa:	 Not yet ported
@@ -68,9 +66,7 @@ b) If you're cross-compiling, you need to set KLIBCARCH to the
    Note that even the "working" ones likely have bugs.  Please report
    them if you run into them.
 
-c) Type "make" and pray...
-
-d) Try the test programs in the tests/ directory.  They should run...
+c) Try the test programs in the tests/ directory.  They should run...
 
 Contact the klibc mailing list:
 

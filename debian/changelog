@@ -1,23 +1,121 @@
-klibc (1.5.25-1ubuntu2pexip1) pexip; urgency=low
+klibc (2.0.3-1pexip1) pexip; urgency=low
 
   * Prepare Pexip packaging
 
- -- John-Mark Bell <jmb@pexip.com>  Tue, 24 Dec 2013 21:20:28 +0000
+ -- John-Mark Bell <jmb@pexip.com>  Fri, 09 May 2014 01:10:28 +0100
 
-klibc (1.5.25-1ubuntu2) precise; urgency=low
+klibc (2.0.3-1) unstable; urgency=medium
 
-  * Fix cross building - LP: #963047
+  * New upstream release (arm64, ppc64) (closes: #698018, #744884)
+    Thanks to Steve Capper <steve.capper@linaro.org>
+    and Anton Blanchard <anton@samba.org>.
+  * Pump standard version to 3.9.5 without changes.
 
- -- Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>  Fri, 30 Mar 2012 11:40:20 +0300
+ -- maximilian attems <maks@debian.org>  Mon, 21 Apr 2014 10:52:22 -0700
 
-klibc (1.5.25-1ubuntu1) precise; urgency=low
+klibc (2.0.2-1) unstable; urgency=low
 
-  * Merge from Debian testing.  Remaining changes:
-    - Fix build to work with multiarched linux-libc-dev.
-  * Add debian/patches/define-__aligned_u64
-    - Defines __aligned_u64 to work with new linux headers
+  * New upstream release (dash, arm)
+    - drop merged patches
+    - build fixes for Linux > 3.4 (closes: #702068)
 
- -- Adam Conrad <adconrad@ubuntu.com>  Sun, 20 Nov 2011 03:35:09 +0000
+ -- maximilian attems <maks@debian.org>  Mon, 19 Aug 2013 22:59:22 +0200
+
+klibc (2.0.1-3) unstable; urgency=medium
+
+  [ Bill Pringlemeir ]
+  * [f05ff11] [klibc] fix ARM longjmp with zero 'val'.
+
+ -- maximilian attems <maks@debian.org>  Mon, 08 Oct 2012 21:57:01 +0200
+
+klibc (2.0.1-2) unstable; urgency=low
+
+  [ Sven Joachim ]
+  * [08c03cf] klibc: produces 64-bit binaries on i386 with x86_64 kernel
+    (Closes: #677087)
+
+  [ Thorsten Glaser ]
+  * [d8eae3a] [klibc] arm: fix trashing of callee-saved registers in thumb
+     setjmp() (Closes: #634890)
+  * [81170b5] [klibc] arm: unbreak armhf shared binaries (those with thumb)
+  * [aeb7847] armhf builds are always thumb
+
+  [ Jim Meyering ]
+  * [9ba90cd] [klibc] Avoid overflow for very long variable name
+
+ -- maximilian attems <maks@debian.org>  Mon, 01 Oct 2012 15:54:05 +0200
+
+klibc (2.0.1-1) unstable; urgency=high
+
+  * New upstream release (nfsmount, get{host,domain}name())
+  * debian/watch: fix file for new repo layout.
+
+ -- maximilian attems <maks@debian.org>  Thu, 28 Jun 2012 18:29:48 +0200
+
+klibc (2.0-2) unstable; urgency=low
+
+  * debian/control: Add breaks to initramfs-tools for ipconfig /run switch.
+
+ -- maximilian attems <maks@debian.org>  Thu, 31 May 2012 15:42:03 +0200
+
+klibc (2.0-1) unstable; urgency=low
+
+  * New upstream release (arch, ipconfig)
+    - ipconfig support domain-search, lease (closes: #627166)
+
+ -- maximilian attems <maks@debian.org>  Thu, 31 May 2012 15:05:55 +0200
+
+klibc (2.0~rc5-1) unstable; urgency=low
+
+  * New upstream snapshot (arch fixes) (closes: #673413)
+
+ -- maximilian attems <maks@debian.org>  Fri, 18 May 2012 18:16:51 +0200
+
+klibc (2.0~rc4-1) unstable; urgency=low
+
+  * New upstream snapshot (stdio work)
+    - drop merged m68k-support
+  * armel: Set arm arch for cross compiling.
+  * klibc-linux-libc-dev: Adapt for cross building (closes: #666389)
+    Based on Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org> 
+
+ -- maximilian attems <maks@debian.org>  Fri, 18 May 2012 14:48:04 +0200
+
+klibc (2.0~rc3-1) unstable; urgency=low
+
+  * New upstream snapshot (closes: #653790)
+    - klibc/s390x klcc fix thanks to Aurelien Jarno <aurel32@debian.org>.
+  * Pump standard version to 3.9.3 without changes.
+
+ -- maximilian attems <maks@debian.org>  Fri, 02 Mar 2012 11:08:51 +0100
+
+klibc (2.0~rc2-0.1) unstable; urgency=low
+
+  * Non-maintainer upload with consent of maintainer.
+  * Upload to unstable (maks says we target 2.0 for wheezy)
+  * New upstream snapshot (fixes FTBFS)
+  * Update Vcs-* for (temporary) move to collab-maint
+  * Refresh all patches
+  * Add m68k patch submitted upstream, for testing (Closes: #334917)
+  * Shut up lintian
+
+ -- Thorsten Glaser <tg@mirbsd.de>  Sat, 11 Feb 2012 19:25:23 +0000
+
+klibc (1.5.25-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix build to work with multiarched linux-libc-dev (using patch from
+    Ubuntu), closes: #645738.
+
+ -- Julien Cristau <jcristau@debian.org>  Fri, 30 Dec 2011 17:04:30 +0100
+
+klibc (2.0~rc1-1experimental1) experimental; urgency=low
+
+  * New upstream snapshot release (buffered stdio)
+  * Ubuntu sync fix klcc for multiarch. (closes: #639057, LP: #829356)
+    Thanks Colin Watson <cjwatson@ubuntu.com>.
+
+ -- maximilian attems <maks@debian.org>  Tue, 06 Sep 2011 17:57:54 +0200
 
 klibc (1.5.25-1) unstable; urgency=low
 
@@ -52,26 +150,6 @@ klibc (1.5.23-1) unstable; urgency=low
   * debian/copyright: Add specific BSD license text to keep lintian happy.
 
  -- maximilian attems <maks@debian.org>  Tue, 14 Jun 2011 17:32:53 +0200
-
-klibc (1.5.22-1ubuntu3) precise; urgency=low
-
-  * Cherry-pick changes from Debian to enable building on armhf
-
- -- Adam Conrad <adconrad@ubuntu.com>  Sat, 19 Nov 2011 16:51:24 -0700
-
-klibc (1.5.22-1ubuntu2) oneiric; urgency=low
-
-  * Install /usr/lib/klibc/include/asm symlink even in the presence of
-    multiarch libc6-dev (LP: #829356).
-
- -- Colin Watson <cjwatson@ubuntu.com>  Mon, 22 Aug 2011 12:32:52 +0100
-
-klibc (1.5.22-1ubuntu1) oneiric; urgency=low
-
-  * Restore change from 1.5.20-1ubuntu5, removed by mistake:
-    - Fix build to work with multiarched linux-libc-dev.
-
- -- Colin Watson <cjwatson@ubuntu.com>  Mon, 04 Jul 2011 17:21:55 +0100
 
 klibc (1.5.22-1) unstable; urgency=high
 
@@ -933,7 +1011,7 @@ klibc (1.1.1-8) unstable; urgency=low
 klibc (1.1.1-7) unstable; urgency=low
 
   * Now that we handle the asm arch symlink by owerself, take care on the $arch
-    mapping. 
+    mapping.
 
  -- maximilian attems <maks@sternwelten.at>  Fri, 23 Dec 2005 14:39:49 +0100
 
@@ -972,7 +1050,7 @@ klibc (1.1.1-5) unstable; urgency=low
 
 klibc (1.1.1-4ubuntu7) dapper; urgency=low
 
-  * Patch to get 5 and 6 argument syscalls working on hppa.  
+  * Patch to get 5 and 6 argument syscalls working on hppa.
     Thanks to Kyle McMartin for this patch!
 
  -- Jeff Bailey <jbailey@ubuntu.com>  Tue, 22 Nov 2005 13:27:15 -0500
@@ -987,7 +1065,7 @@ klibc (1.1.1-4ubuntu6) dapper; urgency=low
 klibc (1.1.1-4ubuntu5) dapper; urgency=low
 
   * Include /usr/lib/klibc/lib/libc.so in the development package, as you
-    can't link against the uber-stripped klibc-*.so. 
+    can't link against the uber-stripped klibc-*.so.
 
  -- Scott James Remnant <scott@ubuntu.com>  Thu, 10 Nov 2005 16:44:58 -0500
 
@@ -1001,7 +1079,7 @@ klibc (1.1.1-4ubuntu3) dapper; urgency=low
 
   * Somewhere, in a hotel room in Montreal, one can hear the sounds of
     a big Italian man crying as he places a brown paper bag over his
-    head and admits that sparc really did need gcc-3.3 after all. 
+    head and admits that sparc really did need gcc-3.3 after all.
 
  -- Scott James Remnant <scott@ubuntu.com>  Wed,  9 Nov 2005 17:29:33 -0500
 
@@ -1088,7 +1166,7 @@ klibc (1.0.14-3) unstable; urgency=low
 
 klibc (1.0.14-2) unstable; urgency=low
 
-  * Release it for Debian. 
+  * Release it for Debian.
     Thanks to Jeff Bailey for all the hard work.
 
   * Adapt ubuntu Build-Deps for Debian unstable.
@@ -1155,4 +1233,3 @@ klibc (0.197-1) breezy; urgency=low
   * Initial Release.
 
  -- Jeff Bailey <jbailey@ubuntu.com>  Sun, 23 Jan 2005 21:11:50 -0500
-

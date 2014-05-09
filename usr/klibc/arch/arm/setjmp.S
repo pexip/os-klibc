@@ -40,7 +40,8 @@ setjmp:
 	.type longjmp, #function
 longjmp:
 	ldmia	r0, {r4, r5, r6, r7, r8, r9, r10, fp, sp, lr}
-	mov	r0, r1
+	movs	r0, r1
+	moveq	r0, #1
 	BX(lr)
 	.size longjmp,.-longjmp
 
@@ -68,6 +69,7 @@ longjmp:
 	.type setjmp, #function
 	.thumb_func
 setjmp:
+	mov	r2, r0
 	mov	r3, lr
 	stmia	r0!, {r3, r4, r5, r6, r7}
 	mov	r3, r8
@@ -76,6 +78,8 @@ setjmp:
 	mov	r6, fp
 	mov	r7, sp
 	stmia	r0!, {r3, r4, r5, r6, r7}
+	/* Do not trash r4 .. r7 */
+	ldmia	r2!, {r3, r4, r5, r6, r7}
 	mov	r0, #0
 	BX(lr)
 	.size setjmp,.-setjmp

@@ -30,7 +30,11 @@ export OBJDUMP  := $(KLIBCROSS)objdump
 
 NOSTDINC_FLAGS := -nostdlib -nostdinc -isystem $(shell $(CC) -print-file-name=include)
 
-ARCH	          := $(shell uname -m | sed -e s/i.86/i386/ -e s/parisc64/parisc/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/ -e s/sh.*/sh/)
+ARCH	          := $(shell uname -m | sed -e s/i.86/i386/ \
+			-e s/parisc64/parisc/ -e s/sun4u/sparc64/ \
+			-e s/arm.*/arm/ -e s/sa110/arm/ \
+			-e s/aarch64.*/arm64/ -e s/sh.*/sh/ \
+			-e s/ppc64le/ppc64/)
 export KLIBCARCH  ?= $(ARCH)
 export KLIBCARCHDIR := $(shell echo $(KLIBCARCH) | sed -e s/s390x/s390/)
 
@@ -130,12 +134,13 @@ help:
 	@echo	'test		- Run klibc tests'
 	@echo
 	@echo	'Build options:'
-	@echo	'KLIBCKERNELSRC - Path to a configured linux-2.6 tree'
+	@echo	'KLIBCKERNELSRC - Path to a configured linux tree'
 	@echo	'KLIBCKERNELOBJ - Path to kernel output dir (defaults to KLIBCKERNELSRC)'
 	@echo	'make V=0|1 [targets] 0 => quiet build (default), 1 => verbose build'
+	@echo	'make V=2   [targets] 2 => give reason for rebuild of target'
 	@echo
 	@echo	'Sample invocation:'
-	@echo	'make  KLIBCKERNELSRC=`pwd`/../linux-2.6'
+	@echo	'make  KLIBCKERNELSRC=`pwd`/../linux/usr/'
 
 ###
 # allow one to say make dir/file.o

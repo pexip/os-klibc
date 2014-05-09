@@ -32,6 +32,9 @@
 # define SOCK_NONBLOCK  04000
 #endif
 
+/* The maximum backlock queue length. */
+#define SOMAXCONN	128
+
 #ifndef AF_INET
 #define AF_UNSPEC	0
 #define AF_UNIX		1	/* Unix domain sockets 		*/
@@ -244,8 +247,8 @@ struct ucred {
 
 
 __extern int socket(int, int, int);
-__extern int bind(int, struct sockaddr *, int);
-__extern int connect(int, struct sockaddr *, socklen_t);
+__extern int bind(int, const struct sockaddr *, int);
+__extern int connect(int, const struct sockaddr *, socklen_t);
 __extern int listen(int, int);
 __extern int accept(int, struct sockaddr *, socklen_t *);
 __extern int getsockname(int, struct sockaddr *, socklen_t *);

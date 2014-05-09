@@ -21,10 +21,10 @@ Signed-off-by: maximilian attems <max@stro.at>
  usr/utils/mv.c |  234 +++++++++++++++++++++++++++++++++++++++++++++++++++-----
  1 files changed, 216 insertions(+), 18 deletions(-)
 
-diff --git a/usr/utils/mv.c b/usr/utils/mv.c
-index e3f38ed..f1905c4 100644
---- a/usr/utils/mv.c
-+++ b/usr/utils/mv.c
+Index: klibc-2.0~rc2/usr/utils/mv.c
+===================================================================
+--- klibc-2.0~rc2.orig/usr/utils/mv.c	2012-02-11 18:50:21.000000000 +0000
++++ klibc-2.0~rc2/usr/utils/mv.c	2012-02-11 19:04:54.000000000 +0000
 @@ -1,3 +1,6 @@
 +#include <errno.h>
 +#include <dirent.h>
@@ -238,7 +238,7 @@ index e3f38ed..f1905c4 100644
  	struct stat sb;
  
  	f = 0;
-@@ -32,11 +229,13 @@ int main(int argc, char *argv[])
+@@ -32,11 +229,13 @@
  
  	} while (1);
  
@@ -253,16 +253,13 @@ index e3f38ed..f1905c4 100644
  	memset(&sb, 0, sizeof(struct stat));
  	if (stat(argv[argc - 1], &sb) < 0 && argc - optind > 2) {
  		if (!(S_ISDIR(sb.st_mode))) {
-@@ -47,23 +246,22 @@ int main(int argc, char *argv[])
+@@ -47,23 +246,22 @@
  		}
  	}
  
 -	for (c = optind; c < argc - 1; c++) {
 -		char target[PATH_MAX];
-+	/* remove destination */
-+	if (f)
-+		nuke(argv[argc - 1]);
- 
+-
 -		p = strrchr(argv[c], '/');
 -		p++;
 -
@@ -277,6 +274,10 @@ index e3f38ed..f1905c4 100644
 -		if (rename(argv[c], target) == -1)
 -			perror(target);
 -	}
++	/* remove destination */
++	if (f)
++		nuke(argv[argc - 1]);
++
 +	/* the mv action */
 +	for (c = optind; c < argc - 1; c++)
 +		if (copy(argv[c], argv[argc - 1]) < 0) {
@@ -292,6 +293,3 @@ index e3f38ed..f1905c4 100644
 +		}
  	return 0;
  }
--- 
-1.7.5.4
-

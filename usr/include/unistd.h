@@ -7,6 +7,7 @@
 
 #include <klibc/extern.h>
 #include <klibc/compiler.h>
+#include <klibc/seek.h>
 #include <stddef.h>
 #include <sys/types.h>
 #include <sys/select.h>
@@ -58,28 +59,30 @@ __extern int setfsuid(uid_t);
 #define F_OK	0		/* Existence */
 
 __extern int access(const char *, int);
+__extern int faccessat(int, const char *, int, int);
 __extern int link(const char *, const char *);
-__extern int linkat(int, const char *, int, const char *);
+__extern int linkat(int, const char *, int, const char *, int);
 __extern int unlink(const char *);
 __extern int unlinkat(int, const char *, int);
 __extern int chdir(const char *);
 __extern int fchdir(int);
 __extern int chmod(const char *, mode_t);
 __extern int fchmod(int, mode_t);
-__extern int fchmodat(int, const char *, mode_t);
 __extern int mkdir(const char *, mode_t);
-__extern int mkdirat(int, const char *, const char *, mode_t);
+__extern int mkdirat(int, const char *, mode_t);
 __extern int rmdir(const char *);
 __extern int pipe(int *);
+__extern int pipe2(int *, int);
 __extern int chroot(const char *);
 __extern int symlink(const char *, const char *);
-__extern int symlinkat(int, const char *, const char *);
+__extern int symlinkat(const char *, int, const char *);
 __extern int readlink(const char *, char *, size_t);
 __extern int readlinkat(int, const char *, char *, size_t);
 __extern int chown(const char *, uid_t, gid_t);
 __extern int fchown(int, uid_t, gid_t);
 __extern int lchown(const char *, uid_t, gid_t);
 __extern char *getcwd(char *, size_t);
+__extern int fchownat(int, const char *, uid_t, gid_t, int);
 
 /* Also in <fcntl.h> */
 #ifndef _KLIBC_IN_OPEN_C
@@ -103,9 +106,9 @@ __extern ssize_t pwrite(int, const void *, size_t, off_t);
 
 __extern int dup(int);
 __extern int dup2(int, int);
+__extern int dup3(int, int, int);
 __extern int fcntl(int, int, ...);
 __extern int ioctl(int, int, void *);
-__extern int flock(int, int);
 __extern int ftruncate(int, off_t);
 
 /*

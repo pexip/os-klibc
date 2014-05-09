@@ -167,6 +167,9 @@ static void do_usermodehelper_file(const char *filename, int cap_ordinal)
 		hi32 &= ~(1 << (cap_ordinal - 32));
 
 	/* Commit the new bit masks to the kernel */
+	ret = fflush(file);
+	if (ret != 0)
+		fail("Failed on file %s to fflush %d\n", filename, ret);
 	sprintf(buf, "%u %u", lo32, hi32);
 	ret = fwrite(buf, 1, strlen(buf) + 1, file);
 	if (ret != 0)

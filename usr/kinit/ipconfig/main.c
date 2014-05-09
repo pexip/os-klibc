@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <sys/sysinfo.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <unistd.h>		/* for getopts */
@@ -44,6 +45,20 @@ struct state {
 	struct state *next;
 };
 
+/* #define PROTO_x : for uint8_t proto of struct netdev */
+struct protoinfo {
+	char *name;
+} protoinfos[] = {
+#define PROTO_NONE  0
+	{"none"},
+#define PROTO_BOOTP 1
+	{"bootp"},
+#define PROTO_DHCP  2
+	{"dhcp"},
+#define PROTO_RARP  3
+	{"rarp"}
+};
+
 static inline const char *my_inet_ntoa(uint32_t addr)
 {
 	struct in_addr a;
@@ -55,9 +70,13 @@ static inline const char *my_inet_ntoa(uint32_t addr)
 
 static void print_device_config(struct netdev *dev)
 {
-	printf("IP-Config: %s complete (from %s):\n", dev->name,
-	       my_inet_ntoa(dev->serverid ? dev->serverid : dev->ip_server));
-	printf(" address: %-16s ", my_inet_ntoa(dev->ip_addr));
+	printf("IP-Config: %s complete", dev->name);
+	if (dev->proto == PROTO_BOOTP || dev->proto == PROTO_DHCP)
+		printf(" (%s from %s)", protoinfos[dev->proto].name,
+		       my_inet_ntoa(dev->serverid ?
+				    dev->serverid : dev->ip_server));
+
+	printf(":\n address: %-16s ", my_inet_ntoa(dev->ip_addr));
 	printf("broadcast: %-16s ", my_inet_ntoa(dev->ip_broadcast));
 	printf("netmask: %-16s\n", my_inet_ntoa(dev->ip_netmask));
 	printf(" gateway: %-16s ", my_inet_ntoa(dev->ip_gateway));
@@ -123,11 +142,18 @@ static void dump_device_config(struct netdev *dev)
 {
 	char fn[40];
 	FILE *f;
+	/*
+	 * char UINT64_MAX[] = "18446744073709551615";
+	 * sizeof(UINT64_MAX)==21
+	 */
+	char buf21[21];
+	const char path[] = "/run/";
 
-	snprintf(fn, sizeof(fn), "/tmp/net-%s.conf", dev->name);
+	snprintf(fn, sizeof(fn), "%snet-%s.conf", path, dev->name);
 	f = fopen(fn, "w");
 	if (f) {
 		write_option(f, "DEVICE", dev->name);
+		write_option(f, "PROTO", protoinfos[dev->proto].name);
 		write_option(f, "IPV4ADDR",
 				my_inet_ntoa(dev->ip_addr));
 		write_option(f, "IPV4BROADCAST",
@@ -147,6 +173,12 @@ static void dump_device_config(struct netdev *dev)
 				my_inet_ntoa(dev->ip_server));
 		write_option(f, "ROOTPATH", dev->bootpath);
 		write_option(f, "filename", dev->filename);
+		sprintf(buf21, "%ld", (long)dev->uptime);
+		write_option(f, "UPTIME", buf21);
+		sprintf(buf21, "%u", (unsigned int)dev->dhcpleasetime);
+		write_option(f, "DHCPLEASETIME", buf21);
+		write_option(f, "DOMAINSEARCH", dev->domainsearch == NULL ?
+			     "" : dev->domainsearch);
 		fclose(f);
 	}
 }
@@ -180,6 +212,10 @@ static void postprocess_device(struct netdev *dev)
 
 static void complete_device(struct netdev *dev)
 {
+	struct sysinfo info;
+
+	if (!sysinfo(&info))
+		dev->uptime = info.uptime;
 	postprocess_device(dev);
 	configure_device(dev);
 	dump_device_config(dev);
@@ -217,6 +253,7 @@ static int process_receive_event(struct state *s, time_t now)
 			break;
 		case 1:
 			s->state = DEVST_COMPLETE;
+			s->dev->proto = PROTO_BOOTP;
 			dprintf("\n   bootp reply\n");
 			break;
 		}
@@ -249,6 +286,7 @@ static int process_receive_event(struct state *s, time_t now)
 			break;
 		case DHCPACK:	/* ACK received */
 			s->state = DEVST_COMPLETE;
+			s->dev->proto = PROTO_DHCP;
 			break;
 		case DHCPNAK:	/* NAK received */
 			s->state = DEVST_DHCPDISC;
@@ -408,7 +446,7 @@ static int loop(void)
 			prev = now;
 			gettimeofday(&now, NULL);
 
-			if ((fds[0].revents & POLLRDNORM)) {
+			if ((nr > 0) && (fds[0].revents & POLLRDNORM)) {
 				if (do_pkt_recv(pkt_fd, now.tv_sec) == 1)
 					break;
 			}
@@ -584,8 +622,10 @@ static void bringup_device(struct netdev *dev)
 	if (netdev_up(dev) == 0) {
 		if (dev->caps)
 			add_one_dev(dev);
-		else
+		else {
+			dev->proto = PROTO_NONE;
 			complete_device(dev);
+		}
 	}
 }
 

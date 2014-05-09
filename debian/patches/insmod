@@ -2,10 +2,10 @@ revert upstream nuked insmod.
 utilized by d-i floppies, can be dropped once m-i-t
 packages an insmod/modprobe compiled against klibc.
 
-diff --git a/usr/utils/Kbuild b/usr/utils/Kbuild
-index 5b6dc28..09157a8 100644
---- a/usr/utils/Kbuild
-+++ b/usr/utils/Kbuild
+Index: klibc-2.0~rc2/usr/utils/Kbuild
+===================================================================
+--- klibc-2.0~rc2.orig/usr/utils/Kbuild	2012-02-11 19:04:51.000000000 +0000
++++ klibc-2.0~rc2/usr/utils/Kbuild	2012-02-11 19:04:53.000000000 +0000
 @@ -4,7 +4,7 @@
  
  progs := chroot dd mkdir mkfifo mknod mount pivot_root umount
@@ -15,7 +15,7 @@ index 5b6dc28..09157a8 100644
  
  static-y := $(addprefix static/, $(progs))
  shared-y := $(addprefix shared/, $(progs))
-@@ -44,6 +44,8 @@ static/minips-y     := minips.o
+@@ -46,6 +46,8 @@
  shared/minips-y     := minips.o
  static/cat-y        := cat.o
  shared/cat-y        := cat.o
@@ -24,11 +24,10 @@ index 5b6dc28..09157a8 100644
  static/uname-y      := uname.o
  shared/uname-y      := uname.o
  static/halt-y       := halt.o
-diff --git a/usr/utils/insmod.c b/usr/utils/insmod.c
-new file mode 100644
-index 0000000..47b5880
---- /dev/null
-+++ b/usr/utils/insmod.c
+Index: klibc-2.0~rc2/usr/utils/insmod.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ klibc-2.0~rc2/usr/utils/insmod.c	2012-02-11 19:04:53.000000000 +0000
 @@ -0,0 +1,140 @@
 +/* insmod.c: insert a module into the kernel.
 +    Copyright (C) 2001  Rusty Russell.
