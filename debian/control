@@ -1,6 +1,7 @@
 Source: klibc
 Priority: optional
 Maintainer: maximilian attems <maks@debian.org>
+Uploaders: Ben Hutchings <ben@decadent.org.uk>
 Build-Depends: debhelper (>= 7.0.50), linux-libc-dev, bison, m4
 Section: libs
 Standards-Version: 3.9.5

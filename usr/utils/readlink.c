@@ -3,34 +3,35 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-char *progname;
+const char *progname;
 
 static __noreturn usage(void)
 {
-	fprintf(stderr, "Usage: %s link\n", progname);
+	fprintf(stderr, "Usage: %s link...\n", progname);
 	exit(1);
 }
 
 int main(int argc, char *argv[])
 {
-	char *name, *link_name = NULL;
-	size_t max_siz = 128;
+	const char *name;
+	char link_name[PATH_MAX];
+	int rv;
+	int i;
 
 	progname = *argv++;
 
-	name = *argv++;
-	if (!name)
+	if (argc < 2)
 		usage();
 
-	link_name = malloc(max_siz);
-	if (!link_name) {
-		perror("malloc");
-		exit(1);
+	while ((name = *argv++)) {
+		rv = readlink(name, link_name, sizeof link_name - 1);
+		if (rv < 0) {
+			perror(name);
+			exit(1);
+		}
+		link_name[rv] = '\n';
+		_fwrite(link_name, rv+1, stdout);
 	}
 
-	if (readlink(name, link_name, max_siz) == -1)
-		exit(1);
-	printf("%s\n", link_name);
-
-	exit(0);
+	return 0;
 }

@@ -72,7 +72,7 @@ override_dh_auto_build:
 
 override_dh_auto_clean:
 	rm -rf linux
-	dh_auto_clean
+	MAKEFLAGS="$(DEB_MAKE_ENVVARS)" dh_auto_clean
 
 override_dh_auto_install:
 	make install $(DEB_MAKE_ENVVARS)
