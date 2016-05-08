@@ -2,6 +2,7 @@ From: Ben Hutchings <ben@decadent.org.uk>
 Date: Sat, 27 Sep 2014 15:04:15 +0100
 Subject: [klibc] Implement realpath()
 Bug-Debian: https://bugs.debian.org/763049
+Forwarded: http://www.zytor.com/pipermail/klibc/2016-January/003885.html
 
 This is needed as the basis for the readlink -f option.
 

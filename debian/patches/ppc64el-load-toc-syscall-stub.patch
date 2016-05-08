@@ -1,5 +1,7 @@
+From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Date: Tue, 09 Sep 2014 15:17:19 -0700
 Subject: [klibc] [PATCH] ppc64: ELFv2: Load TOC value in system call stub
-Origin: http://www.zytor.com/pipermail/klibc/2014-September/003603.html
+Forwarded: http://www.zytor.com/pipermail/klibc/2016-January/003878.html
 
 This fixes a segmentation fault in the system call's error handling path with
 dynamically-linked binaries on PowerPC64 little endian.  The system call stub
@@ -32,7 +34,7 @@ pointing out the solution.
 [1] https://gcc.gnu.org/ml/gcc-patches/2013-11/msg01141.html
 [2] https://www.sourceware.org/ml/libc-alpha/2013-11/msg00315.html
 
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo at linux.vnet.ibm.com>
+Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
 ---
  usr/klibc/arch/ppc64/sysstub.ph |    3 +++
  1 files changed, 3 insertions(+), 0 deletions(-)

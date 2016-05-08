@@ -1,7 +1,7 @@
-From a009e11bf6544c394b000d46a30daad77db8e7b5 Mon Sep 17 00:00:00 2001
 From: maximilian attems <max@stro.at>
 Date: Mon, 4 Jul 2011 17:51:52 +0200
 Subject: [PATCH] [klibc] Fix minimal mv to work across fs
+Forwarded: not-needed
 
 This is the use case in initramfs to keep data from /run to /root/run
 before calling switch_root().
@@ -17,6 +17,8 @@ While we are it require move to have mv at least 2 arguments passed.
 
 Signed-off-by: Ulrich Dangel <uli@spamt.net>
 Signed-off-by: maximilian attems <max@stro.at>
+[bwh: This is no longer needed by initramfs-tools starting with version 0.121,
+ so can be dropped after the stretch release]
 ---
  usr/utils/mv.c |  234 +++++++++++++++++++++++++++++++++++++++++++++++++++-----
  1 files changed, 216 insertions(+), 18 deletions(-)
