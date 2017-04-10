@@ -24,6 +24,8 @@
 #include <stdint.h>
 #include <klibc/compiler.h>
 #include <elf.h>
+#include <sys/auxv.h>
+#include <klibc/sysconfig.h>
 #include "atexit.h"
 
 /* This file is included from __static_init.c or __shared_init.c */
@@ -35,11 +37,14 @@ char **environ;
 unsigned int __page_size, __page_shift;
 
 struct auxentry {
-	uintptr_t type;
-	uintptr_t v;
+	unsigned long type;
+	unsigned long v;
 };
 
-extern void __init_stdio(void);
+extern void __libc_init_stdio(void);
+extern void __libc_archinit(void);
+
+unsigned long __auxval[_AUXVAL_MAX];
 
 __noreturn __libc_init(uintptr_t * elfdata, void (*onexit) (void))
 {
@@ -76,26 +81,22 @@ __noreturn __libc_init(uintptr_t * elfdata, void (*onexit) (void))
 	auxentry = (struct auxentry *)(envend + 1);
 
 	while (auxentry->type) {
-		switch (auxentry->type) {
-#if SHARED
-		case AT_ENTRY:
-			MAIN = (main_t) (auxentry->v);
-			break;
-#endif
-		case AT_PAGESZ:
-			page_size = (unsigned int)(auxentry->v);
-			break;
-		}
+		if (auxentry->type < _AUXVAL_MAX)
+			__auxval[auxentry->type] = auxentry->v;
 		auxentry++;
 	}
 
-	__page_size = page_size;
+#if SHARED
+	MAIN = (main_t) __auxval[AT_ENTRY];
+#endif
+
+	__page_size = page_size = __auxval[AT_PAGESZ];
 
 #if __GNUC__ >= 4
 	/* unsigned int is 32 bits on all our architectures */
 	page_shift = __builtin_clz(page_size) ^ 31;
 #elif defined(__i386__) || defined(__x86_64__)
-      asm("bsrl %1,%0": "=r"(page_shift):"r"(page_size));
+	asm("bsrl %1,%0" : "=r" (page_shift) : "r" (page_size));
 #else
 	while (page_size > 1) {
 		page_shift++;
@@ -104,7 +105,11 @@ __noreturn __libc_init(uintptr_t * elfdata, void (*onexit) (void))
 #endif
 	__page_shift = page_shift;
 
-	__init_stdio();
+#if _KLIBC_HAS_ARCHINIT
+	__libc_archinit();
+#endif
+
+	__libc_init_stdio();
 
 	environ = envp;
 	exit(MAIN(argc, argv, envp));

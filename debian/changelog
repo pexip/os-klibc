@@ -1,3 +1,45 @@
+klibc (2.0.4-2pexip1) pexip; urgency=low
+
+  * New upstream release
+
+ -- John-Mark Bell <jmb@pexip.com>  Tue, 11 Apr 2017 00:05:31 +0100
+
+klibc (2.0.4-2) unstable; urgency=medium
+
+  * debian/control: Add myself to Uploaders
+  * [klibc] MIPS: Update archfcntl.h (fixes FTBFS)
+  * Fix compiler warning in usr/klibc/realpath.c
+
+ -- Ben Hutchings <ben@decadent.org.uk>  Sun, 05 Oct 2014 01:13:31 +0100
+
+klibc (2.0.4-1.2) unstable; urgency=medium
+
+  * Non-maintainer upload
+  * Implement features needed for mounting /usr in initramfs (Closes: #763049):
+    - Implement realpath()
+    - readlink: Add -f option
+    - mount: Implement -o defaults
+  * debian/rules: Fix clean when userland and kernel architecture differ
+
+ -- Ben Hutchings <ben@decadent.org.uk>  Sat, 04 Oct 2014 17:01:24 +0100
+
+klibc (2.0.4-1.1) unstable; urgency=medium
+
+  [ Aurelien Jarno ]
+  * Non-maintainer upload.
+
+  [ Mauricio Faria de Oliveira ]
+  * Add ppc64el-load-toc-syscall-stub.patch: fix segfault on dynamically-linked
+    binaries on ppc64el. (Closes: #749060)
+
+ -- Aurelien Jarno <aurel32@debian.org>  Wed, 17 Sep 2014 13:47:02 +0200
+
+klibc (2.0.4-1) unstable; urgency=medium
+
+  * New upstream release (x86, readlink) (closes: #760587)
+
+ -- maximilian attems <maks@debian.org>  Thu, 11 Sep 2014 21:23:25 +0200
+
 klibc (2.0.3-1pexip1) pexip; urgency=low
 
   * Prepare Pexip packaging
