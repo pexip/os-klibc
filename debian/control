@@ -10,7 +10,7 @@ Vcs-Browser: http://anonscm.debian.org/gitweb/?p=kernel/klibc.git
 Vcs-Git: git://anonscm.debian.org/kernel/klibc.git
 # maybe some day replace with a real one?
 Homepage: http://git.kernel.org/?p=libs/klibc/klibc.git;a=summary
-XS-Pexip-Upstream: http://ftp.debian.org/debian/ jessie
+XS-Pexip-Upstream: http://ftp.debian.org/debian/ stretch
 
 Package: libklibc-dev
 Section: libdevel
