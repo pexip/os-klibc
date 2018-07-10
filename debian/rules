@@ -27,8 +27,11 @@ endif
 ifeq ($(DEB_HOST_ARCH),powerpc)
 ARCH=ppc
 endif
-ifneq (,$(findstring $(DEB_HOST_ARCH),mips mipsel))
+ifneq (,$(filter mips mipsel,$(DEB_HOST_ARCH)))
 DEB_MAKE_ENVVARS := ARCH=mips
+endif
+ifneq (,$(filter mips64 mips64el,$(DEB_HOST_ARCH)))
+DEB_MAKE_ENVVARS := ARCH=mips64
 endif
 ifeq ($(DEB_HOST_ARCH),sh4)
 DEB_MAKE_ENVVARS := ARCH=sh
@@ -81,4 +84,4 @@ override_dh_auto_test:
 	make test $(DEB_MAKE_ENVVARS)
 
 override_dh_fixperms:
-	dh_fixperms -Xklibc-
+	dh_fixperms -X.so

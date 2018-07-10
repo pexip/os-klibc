@@ -2,6 +2,7 @@ From: Ben Hutchings <ben@decadent.org.uk>
 Date: Sun, 05 Oct 2014 01:08:21 +0100
 Subject: [klibc] MIPS: Update archfcntl.h
 Bug-Debian: https://bugs.debian.org/763049
+Forwarded: http://www.zytor.com/pipermail/klibc/2016-January/003879.html
 
 Update usr/include/arch/mips/archfcntl.h from kernel headers:
 

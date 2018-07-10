@@ -2,6 +2,7 @@ From: Ben Hutchings <ben@decadent.org.uk>
 Date: Sat, 4 Oct 2014 16:32:39 +0100
 Subject: mount: Implement -o defaults
 Bug-Debian: https://bugs.debian.org/763049
+Forwarded: http://www.zytor.com/pipermail/klibc/2016-January/003887.html
 
 This is needed to support mounting non-root filesystems in
 initramfs-tools.

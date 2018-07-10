@@ -2,6 +2,7 @@ From: Ben Hutchings <ben@decadent.org.uk>
 Date: Sat, 27 Sep 2014 15:18:21 +0100
 Subject: readlink: Add -f option
 Bug-Debian: https://bugs.debian.org/763049
+Forwarded: http://www.zytor.com/pipermail/klibc/2016-January/003886.html
 
 This is needed to support mounting non-root filesystems in
 initramfs-tools.
