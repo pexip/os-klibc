@@ -1,3 +1,9 @@
+klibc (2.0.4-9pexip1) pexip; urgency=medium
+
+  * Migrate to Stretch
+
+ -- John-Mark Bell <jmb@pexip.com>  Tue, 10 Jul 2018 11:09:16 +0000
+
 klibc (2.0.4-9) unstable; urgency=medium
 
   * Change dh_fixperms arguments to restore binary reproducibility
