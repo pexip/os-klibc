@@ -30,6 +30,7 @@ static unsigned int default_caps = CAP_DHCP | CAP_BOOTP | CAP_RARP;
 static int loop_timeout = -1;
 static int configured;
 static int bringup_first = 0;
+static int n_devices = 0;
 
 /* DHCP vendor class identifier */
 char vendor_class_identifier[260];
@@ -70,6 +71,8 @@ static inline const char *my_inet_ntoa(uint32_t addr)
 
 static void print_device_config(struct netdev *dev)
 {
+	int dns0_spaces;
+	int dns1_spaces;
 	printf("IP-Config: %s complete", dev->name);
 	if (dev->proto == PROTO_BOOTP || dev->proto == PROTO_DHCP)
 		printf(" (%s from %s)", protoinfos[dev->proto].name,
@@ -79,9 +82,27 @@ static void print_device_config(struct netdev *dev)
 	printf(":\n address: %-16s ", my_inet_ntoa(dev->ip_addr));
 	printf("broadcast: %-16s ", my_inet_ntoa(dev->ip_broadcast));
 	printf("netmask: %-16s\n", my_inet_ntoa(dev->ip_netmask));
-	printf(" gateway: %-16s ", my_inet_ntoa(dev->ip_gateway));
-	printf("dns0     : %-16s ", my_inet_ntoa(dev->ip_nameserver[0]));
-	printf("dns1   : %-16s\n", my_inet_ntoa(dev->ip_nameserver[1]));
+	if (dev->routes != NULL) {
+		struct route *cur;
+		char *delim = "";
+		printf(" routes :");
+		for (cur = dev->routes; cur != NULL; cur = cur->next) {
+			printf("%s %s/%u", delim, my_inet_ntoa(cur->subnet), cur->netmask_width);
+			if (cur->gateway != 0) {
+				printf(" via %s", my_inet_ntoa(cur->gateway));
+			}
+			delim = ",";
+		}
+		printf("\n");
+		dns0_spaces = 3;
+		dns1_spaces = 5;
+	} else {
+		printf(" gateway: %-16s", my_inet_ntoa(dev->ip_gateway));
+		dns0_spaces = 5;
+		dns1_spaces = 3;
+	}
+	printf(" dns0%*c: %-16s", dns0_spaces, ' ', my_inet_ntoa(dev->ip_nameserver[0]));
+	printf(" dns1%*c: %-16s\n", dns1_spaces, ' ', my_inet_ntoa(dev->ip_nameserver[1]));
 	if (dev->hostname[0])
 		printf(" host   : %-64s\n", dev->hostname);
 	if (dev->dnsdomainname[0])
@@ -105,8 +126,8 @@ static void configure_device(struct netdev *dev)
 	if (netdev_setaddress(dev))
 		printf("IP-Config: failed to set addresses on %s\n",
 		       dev->name);
-	if (netdev_setdefaultroute(dev))
-		printf("IP-Config: failed to set default route on %s\n",
+	if (netdev_setroutes(dev))
+		printf("IP-Config: failed to set routes on %s\n",
 		       dev->name);
 	if (dev->hostname[0] &&
 			sethostname(dev->hostname, strlen(dev->hostname)))
@@ -160,8 +181,24 @@ static void dump_device_config(struct netdev *dev)
 				my_inet_ntoa(dev->ip_broadcast));
 		write_option(f, "IPV4NETMASK",
 				my_inet_ntoa(dev->ip_netmask));
-		write_option(f, "IPV4GATEWAY",
-				my_inet_ntoa(dev->ip_gateway));
+		if (dev->routes != NULL) {
+			/* Use 6 digits to encode the index */
+			char key[23];
+			char value[19];
+			int i = 0;
+			struct route *cur;
+			for (cur = dev->routes; cur != NULL; cur = cur->next) {
+				snprintf(key, sizeof(key), "IPV4ROUTE%iSUBNET", i);
+				snprintf(value, sizeof(value), "%s/%u", my_inet_ntoa(cur->subnet), cur->netmask_width);
+				write_option(f, key, value);
+				snprintf(key, sizeof(key), "IPV4ROUTE%iGATEWAY", i);
+				write_option(f, key, my_inet_ntoa(cur->gateway));
+				i++;
+			}
+		} else {
+			write_option(f, "IPV4GATEWAY",
+					my_inet_ntoa(dev->ip_gateway));
+		}
 		write_option(f, "IPV4DNS0",
 				my_inet_ntoa(dev->ip_nameserver[0]));
 		write_option(f, "IPV4DNS1",
@@ -220,6 +257,7 @@ static void complete_device(struct netdev *dev)
 	configure_device(dev);
 	dump_device_config(dev);
 	print_device_config(dev);
+	packet_close(dev);
 
 	++configured;
 
@@ -374,34 +412,36 @@ struct netdev *ifaces;
  *  0 = No dhcp/bootp packet was received
  *  1 = A packet was received and handled
  */
-static int do_pkt_recv(int pkt_fd, time_t now)
+static int do_pkt_recv(int nr, struct pollfd *fds, time_t now)
 {
-	int ret = 0;
+	int i, ret = 0;
 	struct state *s;
 
-	for (s = slist; s; s = s->next)
-		ret |= process_receive_event(s, now);
+	for (i = 0, s = slist; s && nr; s = s->next, i++) {
+		if (fds[i].revents & POLLRDNORM) {
+			ret |= process_receive_event(s, now);
+			nr--;
+		}
+	}
 	return ret;
 }
 
 static int loop(void)
 {
-#define NR_FDS	1
-	struct pollfd fds[NR_FDS];
+	struct pollfd *fds;
 	struct state *s;
-	int pkt_fd;
-	int nr = 0, rc = 0;
+	int i, nr = 0, rc = 0;
 	struct timeval now, prev;
 	time_t start;
 
-	pkt_fd = packet_open();
-	if (pkt_fd == -1) {
-		perror("packet_open");
-		return -1;
+	fds = malloc(sizeof(struct pollfd) * n_devices);
+	if (!fds) {
+		fprintf(stderr, "malloc failed\n");
+		rc = -1;
+		goto bail;
 	}
 
-	fds[0].fd = pkt_fd;
-	fds[0].events = POLLRDNORM;
+	memset(fds, 0, sizeof(*fds));
 
 	gettimeofday(&now, NULL);
 	start = now.tv_sec;
@@ -412,8 +452,11 @@ static int loop(void)
 		int timeout_ms;
 		int x;
 
-		for (s = slist; s; s = s->next) {
+		for (i = 0, s = slist; s; s = s->next, i++) {
 			dprintf("%s: state = %d\n", s->dev->name, s->state);
+
+			fds[i].fd = s->dev->pkt_fd;
+			fds[i].events = POLLRDNORM;
 
 			if (s->state == DEVST_COMPLETE) {
 				done++;
@@ -442,14 +485,12 @@ static int loop(void)
 			if (timeout_ms <= 0)
 				timeout_ms = 100;
 
-			nr = poll(fds, NR_FDS, timeout_ms);
+			nr = poll(fds, n_devices, timeout_ms);
 			prev = now;
 			gettimeofday(&now, NULL);
 
-			if ((nr > 0) && (fds[0].revents & POLLRDNORM)) {
-				if (do_pkt_recv(pkt_fd, now.tv_sec) == 1)
-					break;
-			}
+			if ((nr > 0) && do_pkt_recv(nr, fds, now.tv_sec))
+				break;
 
 			if (loop_timeout >= 0 &&
 			    now.tv_sec - start >= loop_timeout) {
@@ -468,8 +509,8 @@ static int loop(void)
 		}
 	}
 bail:
-	packet_close();
-
+	if (fds)
+		free(fds);
 	return rc;
 }
 
@@ -497,6 +538,8 @@ static int add_one_dev(struct netdev *dev)
 
 	state->next = slist;
 	slist = state;
+
+	n_devices++;
 
 	return 0;
 }
@@ -539,7 +582,7 @@ bail:
 
 static int add_all_devices(struct netdev *template);
 
-static int parse_device(struct netdev *dev, const char *ip)
+static int parse_device(struct netdev *dev, char *ip)
 {
 	char *cp;
 	int opt;
@@ -652,7 +695,7 @@ static void bringup_one_dev(struct netdev *template, struct netdev *dev)
 	bringup_device(dev);
 }
 
-static struct netdev *add_device(const char *info)
+static struct netdev *add_device(char *info)
 {
 	struct netdev *dev;
 	int i;
@@ -673,6 +716,9 @@ static struct netdev *add_device(const char *info)
 		goto bail;
 
 	if (bootp_init_if(dev) == -1)
+		goto bail;
+
+	if (packet_open(dev) == -1)
 		goto bail;
 
 	printf("IP-Config: %s hardware address", dev->name);

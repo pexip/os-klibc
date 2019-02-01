@@ -26,6 +26,7 @@ static uint8_t dhcp_params[] = {
 	28,			/* broadcast addr */
 	40,			/* NIS domain name (why?) */
 	119,			/* Domain Search Option */
+	121,			/* Classless Static Route Option (RFC3442) */
 };
 
 static uint8_t dhcp_discover_hdr[] = {
@@ -201,8 +202,14 @@ static int dhcp_send(struct netdev *dev, struct iovec *vec)
 	bootp.hlen	= dev->hwlen;
 	bootp.xid	= dev->bootp.xid;
 	bootp.ciaddr	= INADDR_ANY;
-	bootp.yiaddr	= dev->ip_addr;
+	/* yiaddr should always be set to 0 for the messages we're likely
+	 * to send as a DHCP client: DHCPDISCOVER, DHCPREQUEST, DHCPDECLINE,
+	 * DHCPINFORM, DHCPRELEASE
+	 * cf. RFC2131 section 4.1.1, table 5.
+	 */
+	bootp.yiaddr	= INADDR_ANY;
 	bootp.giaddr	= INADDR_ANY;
+	bootp.flags	= htons(0x8000);
 	bootp.secs	= htons(time(NULL) - dev->open_time);
 	memcpy(bootp.chaddr, dev->hwaddr, 16);
 

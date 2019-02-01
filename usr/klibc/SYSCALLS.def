@@ -21,7 +21,7 @@ void _exit,exit::_exit(int);
 <?!ia64> pid_t clone::__clone(unsigned long, void *);
 <?ia64> pid_t clone::__clone2(unsigned long, void *, void *);
 # if ! _KLIBC_NO_MMU
-<!sparc,sparc64,ia64,arm64> pid_t fork();
+<!sparc,sparc64,ia64,arm64,riscv64> pid_t fork();
 <sparc,sparc64> pid_t fork@forkish();
 #endif
 #if _KLIBC_REAL_VFORK
@@ -30,7 +30,7 @@ void _exit,exit::_exit(int);
  * stubs, due to the no-stack requirement.  These are the
  * architectures which do not.
  */
-<alpha,m32r,ppc,ppc64,sh,s390,s390x> pid_t vfork();
+<alpha,ppc,ppc64,sh,s390,s390x> pid_t vfork();
 <sparc,sparc64> pid_t vfork@forkish();
 #endif
 <!alpha> pid_t getpid();
@@ -116,6 +116,7 @@ int chdir(const char *);
 int fchdir(int);
 <?> int rename(const char *, const char *);
 <?> int renameat(int, const char *, int, const char *);
+<?> int renameat2(int, const char *, int, const char *, unsigned int);
 <?> int mknod(const char *, mode_t, dev_t);
 <?> int mknodat(int, const char *, mode_t, dev_t);
 <?> int chmod(const char *, mode_t);
@@ -189,8 +190,10 @@ int fdatasync,fsync::fdatasync(int);
 int readv(int, const struct iovec *, int);
 int writev(int, const struct iovec *, int);
 int ftruncate64,ftruncate::ftruncate(int, off_t);
-ssize_t pread64,pread::pread(int, void *, size_t, off_t);
-ssize_t pwrite64,pwrite::pwrite(int, void *, size_t, off_t);
+<parisc> ssize_t pread64,pread::__pread(int, void *, size_t, off_t);
+<parisc> ssize_t pwrite64,pwrite::__pwrite(int, void *, size_t, off_t);
+<!parisc> ssize_t pread64,pread::pread(int, void *, size_t, off_t);
+<!parisc> ssize_t pwrite64,pwrite::pwrite(int, void *, size_t, off_t);
 int sync_file_range,fdatasync,fsync::sync_file_range(int, off_t, off_t, unsigned int);
 <?> int splice(int, off_t *, int, off_t *, size_t, unsigned int);
 <?> int tee(int, int, size_t, unsigned int);
