@@ -1,5 +1,5 @@
 /*
- * arch/m32r/include/klibc/archsignal.h
+ * arch/riscv/include/klibc/archsignal.h
  *
  * Architecture-specific signal definitions
  *
