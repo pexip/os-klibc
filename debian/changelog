@@ -1,3 +1,19 @@
+klibc (2.0.6-1+deb10u1) buster; urgency=medium
+
+  [ Ben Hutchings ]
+  * Apply security fixes from 2.0.9 (Closes: #989505):
+    - malloc: Set errno on failure
+    - malloc: Fail if requested size > PTRDIFF_MAX (CVE-2021-31873)
+    - calloc: Fail if multiplication overflows (CVE-2021-31870)
+    - cpio: Fix possible integer overflow on 32-bit systems (CVE-2021-31872)
+    - cpio: Fix possible crash on 64-bit systems (CVE-2021-31871)
+
+  [ Thorsten Glaser ]
+  * {set,long}jmp [s390x]: save/restore the correct FPU registers
+    (f8‥f15 not f1/f3/f5/f7) (Closes: #943425)
+
+ -- Ben Hutchings <benh@debian.org>  Sat, 05 Jun 2021 20:20:42 +0200
+
 klibc (2.0.6-1pexip3) pexip; urgency=medium
 
   * Backport patch from upstream klibc to allow building against
