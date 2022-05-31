@@ -12,7 +12,7 @@ Vcs-Browser: https://salsa.debian.org/kernel-team/klibc
 Vcs-Git: https://salsa.debian.org/kernel-team/klibc.git
 # maybe some day replace with a real one?
 Homepage: https://git.kernel.org/cgit/libs/klibc/klibc.git
-XS-Pexip-Upstream: http://ftp.debian.org/debian/ buster
+XS-Pexip-Upstream: http://deb.debian.org/debian/ bullseye
 
 Package: libklibc-dev
 Section: libdevel
