@@ -611,13 +611,6 @@ static int parse_device(struct netdev *dev, char *ip)
 			if ((cp = strchr(ip, ':'))) {
 				*cp++ = '\0';
 			}
-			if (opt > 6) {
-				fprintf(stderr,
-					"%s: too many options for %s\n",
-					progname, dev->name);
-				longjmp(abort_buf, 1);
-			}
-
 			if (*ip == '\0')
 				continue;
 			dprintf("IP-Config: opt #%d: '%s'\n", opt, ip);
@@ -646,6 +639,15 @@ static int parse_device(struct netdev *dev, char *ip)
 				break;
 			case 6:
 				dev->caps = parse_proto(ip);
+				break;
+			case 7:
+				parse_addr(&dev->ip_nameserver[0], ip);
+				break;
+			case 8:
+				parse_addr(&dev->ip_nameserver[1], ip);
+				break;
+			case 9:
+				/* NTP server - ignore */
 				break;
 			}
 		}

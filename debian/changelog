@@ -1,24 +1,111 @@
+klibc (2.0.8-6.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * {set,long}jmp [s390x]: save/restore the correct FPU registers
+    (f8‥f15 not f1/f3/f5/f7) (Closes: #943425)
+
+ -- Thorsten Glaser <tg@mirbsd.de>  Thu, 27 May 2021 00:12:10 +0200
+
+klibc (2.0.8-6) unstable; urgency=medium
+
+  * Upload to unstable
+  * malloc: Set errno on failure
+  * malloc: Fail if requested size > PTRDIFF_MAX (CVE-2021-31873)
+  * calloc: Fail if multiplication overflows (CVE-2021-31870)
+  * cpio: Fix possible integer overflow on 32-bit systems (CVE-2021-31872)
+  * cpio: Fix possible crash on 64-bit systems (CVE-2021-31871)
+
+ -- Ben Hutchings <benh@debian.org>  Fri, 30 Apr 2021 03:05:23 +0200
+
+klibc (2.0.8-5) experimental; urgency=medium
+
+  * alpha: Fix definitions of _NSIG and struct sigaction
+  * ia64: Fix definition of struct sigaction
+
+ -- Ben Hutchings <benh@debian.org>  Fri, 28 Aug 2020 17:41:47 +0100
+
+klibc (2.0.8-4) experimental; urgency=medium
+
+  * signal: Note another reason to define _KLIBC_NEEDS_SA_RESTORER
+  * signal: Add sysconfig setting to force SA_SIGINFO on
+  * s390: Force SA_SIGINFO on and use rt_sigreturn
+  * alpha: Force SA_SIGINFO on
+  * sparc: Force SA_SIGINFO on
+
+ -- Ben Hutchings <benh@debian.org>  Tue, 25 Aug 2020 01:49:14 +0100
+
+klibc (2.0.8-3) experimental; urgency=medium
+
+  * s390: Define __sigreturn() on both s390 and s390x
+  * Revert "alpha: Set sa_restorer for signals and disable executable stack"
+  * alpha: Pass restorer to rt_sigaction() and disable executable stack
+
+ -- Ben Hutchings <benh@debian.org>  Sun, 23 Aug 2020 15:24:00 +0100
+
+klibc (2.0.8-2) experimental; urgency=medium
+
+  * {alpha,s390,sparc}: Set sa_restorer for signals and disable executable
+    stack
+
+ -- Ben Hutchings <benh@debian.org>  Sat, 22 Aug 2020 21:35:52 +0100
+
+klibc (2.0.8-1) unstable; urgency=medium
+
+  [ Ben Hutchings ]
+  * New upstream version:
+    - ipconfig: Ignore NTP server address and any additional fields
+      (Closes: #931416)
+    - Kbuild: Add "-fcommon" for clang builds (Closes: #957405)
+    - Kbuild: Add a per-architecture option to disable exectable stacks
+    - arch: Explicitly disable or enable executable stacks (Closes: #959070)
+  * debian/control: Use my debian.org email in Uploaders field
+  * Use debhelper compatibility level 12:
+    - Build-Depend on debhelper-compat and remove debian/compat
+    - debian/klibc-utils.triggers: Delete as redundant
+  * debian/rules: Really disable stripping libc.so in libklibc-dev
+
+  [ Debian Janitor ]
+  * Trim trailing whitespace.
+  * Set upstream metadata fields: Repository.
+
+ -- Ben Hutchings <benh@debian.org>  Fri, 21 Aug 2020 01:34:13 +0100
+
+klibc (2.0.7-1) unstable; urgency=medium
+
+  [ Ben Hutchings ]
+  * New upstream version:
+    - klcc: Enable stripping even if CONFIG_DEBUG_INFO is enabled
+    - run-init: Allow the initramfs to be persisted across root changes
+      (thanks to Matthew Garrett)
+    - ipconfig: Implement support -d ...:dns0:dns1 options (Closes: #931416)
+    - Kbuild: Work around broken "ar s" in binutils 2.32 (see #941921)
+  * debian/rules: Reorganise make flags variables
+  * debian/rules: Define ARCH for klibc, for all architectures
+  * debian/rules: Delete redundant architecture mappings
+  * debian/rules: Delete redundant export
+  * klibc-utils: Trigger update-initramfs on install/upgrade
+  * initramfs-tools: Don't install commands that already exist in /sbin
+  * initramfs-tools: Exclude kinit and zcat commands earlier
+  * initramfs-tools: Exclude gzip command
+  * Drop "resume: Backward compatibility for resume_offset", which will
+    not be needed in the next release
+  * [klibc] fstype: Drop obsolete support for "ext4dev" (Closes: #932926)
+  * debian/control: Set Maintainer to Debian Kernel Team; move maks to
+    Uploaders
+
+  [ James Clarke ]
+  * debian/control: Restrict m4 build dependency to just sparc
+
+  [ Helmut Grohne ]
+  * Honour DEB_BUILD_OPTIONS=nocheck. (Closes: #922814)
+
+ -- Ben Hutchings <ben@decadent.org.uk>  Tue, 08 Oct 2019 02:14:11 +0100
+
 klibc (2.0.6-1+deb10u1pexip1) pexip; urgency=medium
 
   * New upstream version.
 
  -- Mark Hymers <mark.hymers@pexip.com>  Mon, 21 Jun 2021 12:36:11 +0100
-
-klibc (2.0.6-1+deb10u1) buster; urgency=medium
-
-  [ Ben Hutchings ]
-  * Apply security fixes from 2.0.9 (Closes: #989505):
-    - malloc: Set errno on failure
-    - malloc: Fail if requested size > PTRDIFF_MAX (CVE-2021-31873)
-    - calloc: Fail if multiplication overflows (CVE-2021-31870)
-    - cpio: Fix possible integer overflow on 32-bit systems (CVE-2021-31872)
-    - cpio: Fix possible crash on 64-bit systems (CVE-2021-31871)
-
-  [ Thorsten Glaser ]
-  * {set,long}jmp [s390x]: save/restore the correct FPU registers
-    (f8‥f15 not f1/f3/f5/f7) (Closes: #943425)
-
- -- Ben Hutchings <benh@debian.org>  Sat, 05 Jun 2021 20:20:42 +0200
 
 klibc (2.0.6-1pexip3) pexip; urgency=medium
 
@@ -371,7 +458,7 @@ klibc (2.0~rc4-1) unstable; urgency=low
     - drop merged m68k-support
   * armel: Set arm arch for cross compiling.
   * klibc-linux-libc-dev: Adapt for cross building (closes: #666389)
-    Based on Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org> 
+    Based on Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
 
  -- maximilian attems <maks@debian.org>  Fri, 18 May 2012 14:48:04 +0200
 
